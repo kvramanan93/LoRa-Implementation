@@ -1,0 +1,78 @@
+The idea behind the paper is that PreTrained models have very low intrinsic dimension, in other words we can describe the model 
+as acuurately with a few parameters as with the full model. This is a very interesting idea as we can get rid of a lot of 
+unnecessary parameters and make the model more efficient. The paper uses a method called "Low Rank Projections" to reduce the
+dimension of the model. The paper also shows that the reduced model can be trained to perform as well as the full model.
+
+Inspired by the fact that the model can be reduced to a few parameters, the paper also shows that the we can hypothesize the
+updates to the weights to also have a low intrinsic rank during adaptation.
+
+There is a possibility that the rank of the matix is way higher than the nuumber of rows or columns. So in this case we will try
+to reduce the matrix by decomposing it into a product of potentially smaller matrices.(Kind of factorization). The paper is trying
+to do this by hypothesizing that the matrices have intrinsic low rank hence we dont need all these extra dimensions to represent
+the matrix. The paper also shows that the reduced model can be trained to perform as well as the full model.
+
+r - hyperparameter that determines the rank of the matrix. 
+Ex : 100 * 100 = (100 * 5) * (5 * 100) 
+The parameters have reduced drastically as compared to the original matrix. Now we dont train the entire 100 * 100 matrix but
+only the 5 * 100 and 100 * 5 matrices. This significantly reduces the number of parameters to be trained and also the computation 
+required to train the model.
+
+LoRA reduces the number of parameters to optimize, not necessarily the computattion cost of performing matrix multiplicaiton during
+inference. The reduction in parameters primarily speeds up training and makes fine-tuning more efficient by requiring fewer updates.
+
+The paper specifies that it works just on the attention weights and doesnot touch the query, key and value weights.
+
+So when we use the smaller matrices we dont even need to worry about storing the parameters in the optimizer states. We can just
+store the smaller matrices and use them to update the weights.
+
+If r is very low then delta W has very low intrinsic dimension. 
+peft - parameter efficient fine tuning. LoRA is a subset of this method.
+
+
+Used bloom1b7 for finetuning.
+Bloom is a decoder only model and it has about 3 billion parameters witha 2048 token length. It has about 250k vocab size.
+Bloom - multilingual, has license to use it for research purposes.
+
+
+LoRA - Low Rank Adaptation
+1. Modular design - LoRA decomposes the weight matrices of a large model into smaller low rank matrices. These low rank matrices 
+are the ones that are trained or fine tuned, while the base model remains frozen.
+2. Quick loading - The low rank matrices are stored in a separate file and are loaded during fine tuning. We dont have to load 
+the entire model. Loading these small adaptation modules takes significantly less time than loading the entire model.
+3 Efficient Adaptation - We can swap between different task specific adaptations or fine tuned weights quickly by just loading 
+the low -rank matrices for the specific task.
+
+**Normally, when deploying large models for inference (i.e., using them to make predictions), the entire model must be loaded,
+which can be time-consuming and resource-intensive.
+
+**With PEFT techniques like LoRA, you only need to load the pre-trained base model once, and at inference time, you can load 
+different fine-tuned low-rank matrices (small adaptation parameters) for specific tasks. These are lightweight, so they load 
+quickly.
+
+**At inference time, instead of loading multiple fine-tuned models (which would be slow and inefficient), you can load a base
+model once and apply different PEFT modules as needed.
+
+**This means dynamic adaptation for tasks like translation, sentiment analysis, or even domain-specific applications — all 
+without retraining the whole model.
+
+What Happens When You Fine-Tune with LoRA:
+1. Base Model Stays the Same:
+LoRA keeps the pre-trained base model frozen during fine-tuning. It doesn't modify the base model's parameters, which are
+typically very large.
+
+2. LoRA Adapters Are Small:
+* Instead of updating the entire set of parameters, LoRA introduces small low-rank matrices (LoRA adapters) to capture the 
+task-specific fine-tuning. These matrices are much smaller in size compared to the full model.
+
+3.When You Save the Fine-Tuned Model:
+* Instead of saving the entire model (which might be huge, e.g., 2GB or more), you can just save the LoRA adapters, which 
+represent the small changes that were learned during fine-tuning.
+* This results in a much smaller file because you're not saving the base model again, just the tiny LoRA components.
+
+4. Loading the Model for Inference:
+* When you want to use this fine-tuned model, you can load the pre-trained base model (which you already have) and then 
+apply the small LoRA adapter to it.
+
+This means:
+* You dont need to reload the entire model, just the LoRA adapters.
+* This makes the loading process faster, as youre only loading and applying a small file containing the fine-tuned parameters.
