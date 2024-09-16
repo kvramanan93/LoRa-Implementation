@@ -29,7 +29,7 @@ If r is very low then delta W has very low intrinsic dimension.
 peft - parameter efficient fine tuning. LoRA is a subset of this method.
 
 
-Used bloom1b7 for finetuning.
+Used bloom3b for finetuning.
 Bloom is a decoder only model and it has about 3 billion parameters witha 2048 token length. It has about 250k vocab size.
 Bloom - multilingual, has license to use it for research purposes.
 
