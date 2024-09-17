@@ -2,7 +2,7 @@
 Understanding the Research paper - LoRA : https://arxiv.org/pdf/2106.09685.pdf
 Optimized a pretrained bloom1b7 model with lora:
 ![{D61B2437-6024-4A77-A81F-08EC8AFCD91D}](https://github.com/user-attachments/assets/ea066bca-21b9-413b-a125-d6ad4f304de9)
-**Bloom3b** model has about** 3 billion parameters** and **LoRA implementation** has worked on about **2.4 million parameters** 
+**Bloom3b** model has about **3 billion parameters** and **LoRA implementation** has worked on about **2.4 million parameters** 
 The trainable parameters in this implementation are reduced to approximately **0.082%** of the original model size, while 
 maintaining a training loss of 2.5 over 100 epochs. Remarkably, the **weight updates are stored** in a compact file of about 
 **10 MB**. For such a large model, this optimization technique allows for multiple interchangeable modules, each around
