@@ -35,4 +35,6 @@ Instead of updating the entire parameter set, LoRA introduces small **low-rank m
 ---
 
 ### Key Takeaways:
-- **Efficient and Scalable**: LoRA dramatically reduces computati
+- **Efficient and Scalable**: LoRA dramatically reduces computational and storage requirements without sacrificing model quality.
+- **Compact Fine-Tuning**: Only the small changes in parameters are stored, making the process highly efficient for large models.
+- **Faster Inference**: Loading just the adapters makes the inference process faster and more manageable.
